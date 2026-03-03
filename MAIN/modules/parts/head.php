@@ -4,6 +4,12 @@
 <!-- META DATA -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Catppuccino Café</title>
+
+<link rel="stylesheet" href="root/variables.css">
+<link rel="stylesheet" href="root/colors.css">
+<link rel="stylesheet" href="root/fonts.css">
+<link rel="stylesheet" href="root/style.css">
 
 <!-- WEB ICON -->
 
