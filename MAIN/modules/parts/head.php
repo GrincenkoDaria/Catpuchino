@@ -6,6 +6,8 @@
 
 <title>Catppuccino Café</title>
 
+<?php $currentPage = basename($_SERVER['PHP_SELF']); ?>
+
 <!-- color and variable definitions -->
 <link rel="stylesheet" href="assets/css/root/variables.css">
 <link rel="stylesheet" href="assets/css/root/colors.css">
@@ -16,7 +18,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 
-<!-- main stylesheet (app-wide) -->
-<link rel="stylesheet" type="text/css" href="assets/css/root.css">
-
-<!-- WEB ICON -->
+<!-- shared and page-specific stylesheets -->
+<link rel="stylesheet" type="text/css" href="assets/css/shared.css">
+<?php if ($currentPage === 'index.php'): ?>
+<link rel="stylesheet" type="text/css" href="assets/css/pages/home.css">
+<?php elseif ($currentPage === 'adopt.php'): ?>
+<link rel="stylesheet" type="text/css" href="assets/css/pages/adopt.css">
+<?php elseif ($currentPage === 'menu.php'): ?>
+<link rel="stylesheet" type="text/css" href="assets/css/pages/menu.css">
+<?php elseif ($currentPage === 'events.php'): ?>
+<link rel="stylesheet" type="text/css" href="assets/css/pages/events.css">
+<?php elseif ($currentPage === 'merch.php'): ?>
+<link rel="stylesheet" type="text/css" href="assets/css/pages/merch.css">
+<?php endif; ?>

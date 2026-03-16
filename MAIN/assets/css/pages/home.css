@@ -1,0 +1,169 @@
+/* home hero */
+.hero-section {
+    position: relative;
+    background: url('') center/cover no-repeat;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    color: var(--color5);
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.hero-content {
+    position: relative;
+    padding: 2rem;
+    max-width: 600px;
+}
+
+.hero-content h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+}
+
+.hero-content p {
+    font-size: 1.125rem;
+    margin-bottom: 1.5rem;
+}
+
+.btn-donate {
+    display: inline-block;
+    background: var(--color3);
+    color: var(--color5);
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.btn-donate:hover {
+    background: var(--color2);
+}
+
+/* home page featured cats */
+.featured-cats-home {
+    background: var(--color4);
+    color: var(--color1);
+    padding: 2rem 1rem;
+    margin: 1rem 0;
+    border-radius: 14px;
+}
+
+.featured-cats-home-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.featured-cats-home-header h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: var(--color1);
+}
+
+.featured-cats-home-header p {
+    margin: 0.25rem 0 0;
+    color: var(--color2);
+}
+
+.btn-view-all {
+    margin-top: 0.25rem;
+    align-self: center;
+    background: var(--color3);
+    color: var(--color5);
+    border-radius: 20px;
+    text-decoration: none;
+    padding: 0.45rem 0.95rem;
+    border: none;
+    font-weight: 600;
+    transition: background 0.2s ease;
+}
+
+.btn-view-all:hover {
+    background: var(--color1);
+}
+
+.featured-cats-track {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    width: min(100%, 860px);
+    margin: 0 auto;
+}
+
+.featured-cat-item {
+    background: var(--color5);
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 0.85rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.cat-circle {
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    background: var(--color3);
+    color: var(--color5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    margin: 0 auto 0.45rem;
+    border: 3px solid var(--color1);
+}
+
+.featured-cat-item h3 {
+    margin: 0.2rem 0;
+    font-size: 1rem;
+    color: var(--color1);
+}
+
+.featured-cat-item .cat-age {
+    margin: 0;
+    font-size: 0.83rem;
+    color: var(--color1);
+    font-weight: 600;
+}
+
+.featured-cat-item .cat-brief {
+    margin: 0.3rem 0 0;
+    font-size: 0.76rem;
+    color: #68513b;
+    line-height: 1.3;
+    min-height: 2.4rem;
+}
+
+@media (max-width: 768px) {
+    .featured-cats-home {
+        padding: 1rem;
+    }
+
+    .featured-cats-home-header {
+        align-items: stretch;
+    }
+
+    .btn-view-all {
+        margin-left: auto;
+    }
+}
+
+@media (max-width: 600px) {
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+}

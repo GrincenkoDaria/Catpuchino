@@ -1,3 +1,4 @@
+<?php $currentPage = basename($_SERVER['PHP_SELF']); ?>
 <header class="site-header">
     <div class="logo">
         <!-- simple cat icon, replace with actual graphic if available -->
@@ -7,11 +8,11 @@
 
     <nav class="main-nav" id="main-nav">
         <ul>
-            <li><a href="#" class="active">Home</a></li>
-            <li><a href="#">Adopt</a></li>
-            <li><a href="#">Menu</a></li>
-            <li><a href="#">Events</a></li>
-            <li><a href="#">Merch</a></li>
+            <li><a href="index.php" class="<?php echo $currentPage === 'index.php' ? 'active' : ''; ?>">Home</a></li>
+            <li><a href="adopt.php" class="<?php echo $currentPage === 'adopt.php' ? 'active' : ''; ?>">Adopt</a></li>
+            <li><a href="menu.php" class="<?php echo $currentPage === 'menu.php' ? 'active' : ''; ?>">Menu</a></li>
+            <li><a href="events.php" class="<?php echo $currentPage === 'events.php' ? 'active' : ''; ?>">Events</a></li>
+            <li><a href="merch.php" class="<?php echo $currentPage === 'merch.php' ? 'active' : ''; ?>">Merch</a></li>
             <li><a href="#">About us</a></li>
         </ul>
     </nav>
@@ -25,8 +26,10 @@
     document.addEventListener('DOMContentLoaded', function () {
         var toggle = document.getElementById('menu-toggle');
         var nav = document.getElementById('main-nav');
-        toggle.addEventListener('click', function () {
-            nav.classList.toggle('open');
-        });
+        if (toggle && nav) {
+            toggle.addEventListener('click', function () {
+                nav.classList.toggle('open');
+            });
+        }
     });
 </script>
