@@ -1,6 +1,6 @@
 <?php include_once __DIR__ . '/../cat-data.php'; ?>
 
-<section class="featured-cats-home">
+<section class="featured-cats-home page-container section-spacing">
     <div class="featured-cats-home-header">
         <div>
             <h2>Featured Cats</h2>

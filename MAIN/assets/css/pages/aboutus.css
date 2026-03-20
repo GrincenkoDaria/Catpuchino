@@ -1,0 +1,219 @@
+.about-main {
+    background: var(--color4);
+    min-height: calc(100vh - 140px);
+    padding-bottom: 0;
+}
+
+.about-hero {
+    color: var(--color1);
+}
+
+.about-band {
+    width: 100%;
+}
+
+.about-band-light {
+    background: var(--color4);
+    color: var(--color1);
+}
+
+.about-band-caramel {
+    background: var(--color7);
+    color: var(--color1);
+}
+
+.about-band-dark {
+    background: var(--color7);
+    color: var(--color1);
+}
+
+.about-band-content,
+.about-hero-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+}
+
+.about-band-content {
+    max-width: 860px;
+}
+
+.about-eyebrow,
+.about-kicker {
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.about-hero-content h1 {
+    margin: 0;
+    max-width: 780px;
+    font-size: 2.7rem;
+    line-height: 1.1;
+}
+
+.about-hero-content p:last-child {
+    margin: 0;
+    max-width: 720px;
+    font-size: 1.02rem;
+    color: var(--color1);
+}
+
+.about-panel-heading {
+    margin-bottom: 1rem;
+}
+
+.about-panel-heading h2 {
+    margin: 0.25rem 0 0;
+    font-size: 1.9rem;
+    line-height: 1.2;
+}
+
+.about-band-light .about-panel-heading h2,
+.about-band-light .about-card h3,
+.about-band-light .location-summary-card h3 {
+    color: var(--color1);
+}
+
+.about-band-caramel .about-panel-heading h2,
+.about-band-caramel .about-card h3,
+.about-band-caramel .location-summary-card h3 {
+    color: var(--color1);
+}
+
+.about-band-dark .about-panel-heading h2,
+.about-band-dark .about-card h3,
+.about-band-dark .location-summary-card h3 {
+    color: var(--color1);
+}
+
+.about-band-light .about-kicker {
+    color: var(--color1);
+}
+
+.about-band-caramel .about-kicker {
+    color: var(--color1);
+}
+
+.about-band-dark .about-kicker {
+    color: var(--color1);
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+    max-width: 760px;
+}
+
+.about-card {
+    border-radius: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+
+.about-card + .about-card {
+    padding-top: 0.85rem;
+    border-top: 1px solid rgba(64, 42, 21, 0.25);
+}
+
+.about-card h3,
+.location-summary-card h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.08rem;
+}
+
+.about-card p,
+.location-summary-card p {
+    margin: 0;
+    font-size: 0.94rem;
+    line-height: 1.5;
+}
+
+.about-band-light .about-card p,
+.about-band-light .location-summary-card p {
+    color: var(--color2);
+}
+
+.about-band-caramel .about-card p,
+.about-band-caramel .location-summary-card p {
+    color: var(--color1);
+}
+
+.about-band-dark .about-card p,
+.about-band-dark .location-summary-card p {
+    color: var(--color1);
+}
+
+.location-summary-card {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: center;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    margin: 0 0 1rem;
+}
+
+.location-coordinates {
+    white-space: nowrap;
+    color: var(--color1);
+    font-weight: 700;
+}
+
+.map-frame-wrap {
+    padding: 0;
+    border: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    max-width: 920px;
+}
+
+.location-map {
+    width: 100%;
+    height: 380px;
+    border: 0;
+    display: block;
+    background: var(--color4);
+}
+
+@media (max-width: 900px) {
+    .location-summary-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .location-coordinates {
+        white-space: normal;
+    }
+}
+
+@media (max-width: 680px) {
+    .about-band-content,
+    .about-hero-content {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+
+    .about-hero-content h1 {
+        font-size: 2.1rem;
+    }
+
+    .about-panel-heading h2 {
+        font-size: 1.55rem;
+    }
+
+    .about-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .location-map {
+        height: 300px;
+    }
+}

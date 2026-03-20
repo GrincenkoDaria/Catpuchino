@@ -1,15 +1,12 @@
 /* menu page */
 .menu-main {
-    padding: 1.5rem 1rem 2.5rem;
+    padding: 1.5rem 0 2.5rem;
     background: var(--color3);
     min-height: calc(100vh - 140px);
 }
 
 .menu-section {
     margin-bottom: 2rem;
-    max-width: 1000px;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 .menu-heading {
@@ -171,5 +168,9 @@
 
     .menu-heading h1 {
         font-size: 1.7rem;
+    }
+
+    .menu-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     }
 }

@@ -8,7 +8,7 @@
     <!-- main content placeholder -->
     <main>
         <?php include 'modules/parts/sections/intro.php'; ?>
-        <?php include 'modules/parts/sections/cats-home.php'; ?>
+        <?php include 'modules/parts/sections/home-previews.php'; ?>
     </main>
 
     <?php include 'modules/parts/footer.php'; ?>

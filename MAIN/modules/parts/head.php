@@ -30,4 +30,6 @@
 <link rel="stylesheet" type="text/css" href="assets/css/pages/events.css">
 <?php elseif ($currentPage === 'merch.php'): ?>
 <link rel="stylesheet" type="text/css" href="assets/css/pages/merch.css">
+<?php elseif ($currentPage === 'aboutus.php'): ?>
+<link rel="stylesheet" type="text/css" href="assets/css/pages/aboutus.css">
 <?php endif; ?>

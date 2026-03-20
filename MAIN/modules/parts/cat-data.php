@@ -72,6 +72,25 @@ $adoptableCats = [
     ],
 ];
 
+$adoptedCats = [
+    [
+        'name' => 'Clover',
+        'note' => 'Adopted',
+    ],
+    [
+        'name' => 'Biscuit',
+        'note' => 'Adopted',
+    ],
+    [
+        'name' => 'Toffee',
+        'note' => 'Adopted',
+    ],
+    [
+        'name' => 'Mocha',
+        'note' => 'Adopted',
+    ],
+];
+
 function renderCatCards($cats, $buttonText = 'Adopt me') {
     echo '<div class="cat-cards">';
     foreach ($cats as $cat) {
@@ -82,6 +101,18 @@ function renderCatCards($cats, $buttonText = 'Adopt me') {
         echo '<p class="cat-age">Age: ' . htmlspecialchars($cat['age']) . '</p>';
         echo '<p class="cat-description">' . htmlspecialchars($cat['description']) . '</p>';
         echo '<a class="btn-adopt" href="#" aria-label="Adopt ' . htmlspecialchars($cat['name']) . '">' . htmlspecialchars($buttonText) . '</a>';
+        echo '</div>';
+    }
+    echo '</div>';
+}
+
+function renderAdoptedCatCards($cats) {
+    echo '<div class="cat-cards">';
+    foreach ($cats as $cat) {
+        echo '<div class="cat-card">';
+        echo '<div class="cat-photo-placeholder" role="img" aria-label="Photo placeholder for ' . htmlspecialchars($cat['name']) . '">' . htmlspecialchars($cat['name']) . ' photo</div>';
+        echo '<h3>' . htmlspecialchars($cat['name']) . '</h3>';
+        echo '<p class="cat-description">' . htmlspecialchars($cat['note']) . '</p>';
         echo '</div>';
     }
     echo '</div>';

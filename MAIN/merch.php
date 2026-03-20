@@ -5,33 +5,35 @@
     <?php include 'modules/parts/header.php'; ?>
 
     <main class="merch-main">
-        <?php include 'modules/parts/merch-data.php'; ?>
+        <div class="page-container">
+            <?php include 'modules/parts/merch-data.php'; ?>
 
-        <section class="merch-section">
-            <h1 class="merch-title">Merchandise</h1>
-            <div class="merch-grid">
-                <?php foreach ($merch_items as $item): ?>
-                    <article class="merch-card">
-                        <img class="merch-image" src="<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>">
-                        <div class="merch-content">
-                            <h3 class="merch-name"><?= htmlspecialchars($item['name']) ?></h3>
-                            <p class="merch-description"><?= htmlspecialchars($item['description']) ?></p>
-                            <div class="merch-row">
-                                <span class="merch-price"><?= htmlspecialchars($item['price']) ?></span>
-                                <button
-                                    class="add-cart-btn"
-                                    type="button"
-                                    data-name="<?= htmlspecialchars($item['name']) ?>"
-                                    data-price="<?= htmlspecialchars($item['price']) ?>"
-                                >
-                                    Add to Cart
-                                </button>
+            <section class="merch-section">
+                <h1 class="merch-title">Merchandise</h1>
+                <div class="merch-grid">
+                    <?php foreach ($merch_items as $item): ?>
+                        <article class="merch-card">
+                            <img class="merch-image" src="<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['name']) ?>">
+                            <div class="merch-content">
+                                <h3 class="merch-name"><?= htmlspecialchars($item['name']) ?></h3>
+                                <p class="merch-description"><?= htmlspecialchars($item['description']) ?></p>
+                                <div class="merch-row">
+                                    <span class="merch-price"><?= htmlspecialchars($item['price']) ?></span>
+                                    <button
+                                        class="add-cart-btn"
+                                        type="button"
+                                        data-name="<?= htmlspecialchars($item['name']) ?>"
+                                        data-price="<?= htmlspecialchars($item['price']) ?>"
+                                    >
+                                        Add to Cart
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    </article>
-                <?php endforeach; ?>
-            </div>
-        </section>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+        </div>
     </main>
 
     <button id="cart-fab" class="cart-fab" type="button" aria-label="Open cart">
@@ -85,6 +87,42 @@
                     total += cart[key].price * cart[key].qty;
                 });
                 return total;
+            }
+
+            function animateFlyToCart(fromElement) {
+                if (!fromElement || !cartFab) {
+                    return;
+                }
+
+                var fromRect = fromElement.getBoundingClientRect();
+                var toRect = cartFab.getBoundingClientRect();
+                var startX = fromRect.left + fromRect.width / 2;
+                var startY = fromRect.top + fromRect.height / 2;
+                var endX = toRect.left + toRect.width / 2;
+                var endY = toRect.top + toRect.height / 2;
+                var deltaX = endX - startX;
+                var deltaY = endY - startY;
+
+                var dot = document.createElement('span');
+                dot.className = 'cart-fly-dot';
+                dot.style.left = (startX - 10) + 'px';
+                dot.style.top = (startY - 10) + 'px';
+                dot.style.setProperty('--fly-x', deltaX + 'px');
+                dot.style.setProperty('--fly-y', deltaY + 'px');
+                document.body.appendChild(dot);
+
+                function finishFlyAnimation() {
+                    dot.remove();
+                    cartFab.classList.remove('bump');
+                    void cartFab.offsetWidth;
+                    cartFab.classList.add('bump');
+                }
+
+                requestAnimationFrame(function () {
+                    dot.classList.add('animate');
+                });
+
+                window.setTimeout(finishFlyAnimation, 790);
             }
 
             function renderCart() {
@@ -153,6 +191,7 @@
                     }
                     cart[key].qty += 1;
                     renderCart();
+                    animateFlyToCart(button);
                 });
             });
 

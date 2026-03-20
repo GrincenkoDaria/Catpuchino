@@ -1,13 +1,12 @@
 /* events page */
 .events-main {
-    padding: 1.5rem 1rem 2.5rem;
+    padding: 1.5rem 0 2.5rem;
     background: var(--color3);
     min-height: calc(100vh - 140px);
 }
 
 .events-section {
-    max-width: 1200px;
-    margin: 0 auto 2.2rem;
+    margin: 0 0 2.2rem;
 }
 
 .events-heading {
@@ -124,5 +123,9 @@
 
     .event-image-frame {
         height: 200px;
+    }
+
+    .events-grid {
+        grid-template-columns: 1fr;
     }
 }
