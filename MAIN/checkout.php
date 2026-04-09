@@ -126,8 +126,6 @@ button {
 
 <div class="checkout-container">
 
-<h1>Checkout 🧾</h1>
-
 <p class="total-box">
     Total: <?= number_format($total, 2) ?>€
 </p>

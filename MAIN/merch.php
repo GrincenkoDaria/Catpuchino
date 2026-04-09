@@ -184,31 +184,45 @@ if (isset($_POST['order'])) {
     }
 
     function renderCart() {
-        cartItems.innerHTML = '';
+    cartItems.innerHTML = '';
 
-        var keys = Object.keys(cart);
+    var keys = Object.keys(cart);
 
-        if (!keys.length) {
-            cartItems.innerHTML =
-                '<li class="cart-empty">Your cart is empty.</li>';
-            cartCount.textContent = '0';
-            cartTotal.textContent = formatPrice(0);
-            return;
-        }
+    if (!keys.length) {
+        cartItems.innerHTML =
+            '<li class="cart-empty">Your cart is empty.</li>';
+        cartCount.textContent = '0';
+        cartTotal.textContent = formatPrice(0);
+        return;
+    }
 
-        keys.forEach(function (key) {
-            var item = cart[key];
+    keys.forEach(function (key) {
+        var item = cart[key];
 
-            var li = document.createElement('li');
-            li.className = 'cart-item';
-            li.textContent = item.name + ' x' + item.qty;
+        var li = document.createElement('li');
+        li.className = 'cart-item';
 
-            cartItems.appendChild(li);
+        var name = document.createElement('span');
+        name.textContent = item.name + ' x' + item.qty;
+
+        var remove = document.createElement('button');
+        remove.textContent = '✕';
+        remove.className = 'remove-btn';
+
+        remove.addEventListener('click', function () {
+            delete cart[key];
+            renderCart();
         });
 
-        cartCount.textContent = keys.length;
-        cartTotal.textContent = formatPrice(getTotalCost());
-    }
+        li.appendChild(name);
+        li.appendChild(remove);
+
+        cartItems.appendChild(li);
+    });
+
+    cartCount.textContent = keys.length;
+    cartTotal.textContent = formatPrice(getTotalCost());
+}
 
     addButtons.forEach(function (button) {
         button.addEventListener('click', function () {
