@@ -1,73 +1,61 @@
 <?php
-$drinks = [
-    [
-        'name' => 'Catppuccino Latte',
-        'price' => '$4.90',
-        'image' => 'assets/img/drinks/menu-latte.jpg',
-        'description' => 'Smooth espresso, steamed milk, and a light foam crown.',
-    ],
-    [
-        'name' => 'Matcha Frap',
-        'price' => '$5.30',
-        'image' => 'assets/img/drinks/menu-matcha.jpg',
-        'description' => 'Creamy matcha with milk, a touch of honey, and ice.',
-    ],
-    [
-        'name' => 'Iced Cold Brew',
-        'price' => '$4.20',
-        'image' => 'assets/img/drinks/menu-coldbrew.jpg',
-        'description' => 'Slow-steeped cold brew served over ice with caramel notes.',
-    ],
-    [
-        'name' => 'Vanilla Chai',
-        'price' => '$4.70',
-        'image' => 'assets/img/drinks/menu-chai.jpg',
-        'description' => 'Spiced chai with steamed milk and vanilla aroma.',
-    ],
-];
+include_once __DIR__ . '/../../db.php';
 
-$desserts = [
-    [
-        'name' => 'Chocolate Fudge Cake',
-        'price' => '$6.50',
-        'image' => 'assets/img/desserts/menu-cake.jpg',
-        'description' => 'Rich chocolate layers with creamy ganache.',
-    ],
-    [
-        'name' => 'Berry Tart',
-        'price' => '$5.50',
-        'image' => 'assets/img/desserts/menu-tart.jpg',
-        'description' => 'A crisp crust with fresh berries and custard.',
-    ],
-    [
-        'name' => 'Lavender Macarons',
-        'price' => '$4.10',
-        'image' => 'assets/img/desserts/menu-macarons.jpg',
-        'description' => 'Delicate almond cookies with lavender ganache.',
-    ],
-    [
-        'name' => 'Cinnamon Roll',
-        'price' => '$4.80',
-        'image' => 'assets/img/desserts/menu-roll.jpg',
-        'description' => 'Warm cinnamon swirl topped with cream cheese icing.',
-    ],
-];
+$drinks = [];
+$desserts = [];
 
-function renderMenuCards($items) {
+function renderMenuCards(array $items): void
+{
+    if (empty($items)) {
+        echo '<p>No items available right now.</p>';
+        return;
+    }
+
     foreach ($items as $item) {
         echo '<article class="menu-card">';
+
         echo '<div class="card-front">';
-        echo '<div class="menu-image-frame">';
-        echo '<img class="menu-item-image" src="' . htmlspecialchars($item['image']) . '" alt="' . htmlspecialchars($item['name']) . '">';
-        echo '</div>';
+
+        if (!empty($item['image'])) {
+            echo '<div class="menu-image-frame">';
+            echo '<img class="menu-item-image" src="' . htmlspecialchars($item['image']) . '" alt="' . htmlspecialchars($item['name']) . '">';
+            echo '</div>';
+        } else {
+            echo '<div class="menu-image-placeholder">No Image</div>';
+        }
+
         echo '<div class="menu-card-body">';
         echo '<h3 class="item-name">' . htmlspecialchars($item['name']) . '</h3>';
         echo '<p class="menu-price">' . htmlspecialchars($item['price']) . '</p>';
         echo '</div>';
+
         echo '</div>';
+
         echo '<div class="card-description">';
         echo '<p>' . htmlspecialchars($item['description']) . '</p>';
         echo '</div>';
+
         echo '</article>';
     }
 }
+
+$sql = "SELECT name, description, price, image, category FROM menu_items ORDER BY id ASC";
+$result = $conn->query($sql);
+
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $item = [
+            'name' => $row['name'],
+            'description' => $row['description'],
+            'price' => number_format((float)$row['price'], 2) . '€',
+            'image' => $row['image'] ?? '',
+        ];
+
+        if ($row['category'] === 'drink') {
+            $drinks[] = $item;
+        } elseif ($row['category'] === 'dessert') {
+            $desserts[] = $item;
+        }
+    }
+}
+?>

@@ -18,7 +18,13 @@
     <div class="featured-cats-track" aria-label="Featured cats">
         <?php foreach ($catsToShow as $cat): ?>
             <article class="featured-cat-item">
-                <div class="cat-circle" aria-hidden="true">?</div>
+                <div class="featured-cat-avatar-wrap">
+                    <img
+    class="featured-cat-avatar"
+    src="assets/img/mini/<?= htmlspecialchars($cat['photo']) ?>"
+    alt="<?= htmlspecialchars($cat['name']) ?>"
+>
+                </div>
                 <h3><?= htmlspecialchars($cat['name']) ?></h3>
                 <p class="cat-age"><?= htmlspecialchars($cat['age']) ?></p>
                 <p class="cat-brief"><?= htmlspecialchars($cat['description']) ?></p>

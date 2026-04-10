@@ -6,6 +6,10 @@ include_once __DIR__ . '/../merch-data.php';
 
 function pickRandomItems(array $items, int $count = 3): array
 {
+    if (empty($items)) {
+        return [];
+    }
+
     $selection = $items;
     shuffle($selection);
     return array_slice($selection, 0, min($count, count($selection)));
@@ -19,6 +23,7 @@ function renderPreviewMedia(string $label): void
 function renderHomePreviewSection(string $title, array $cards, string $buttonHref, string $buttonLabel = 'View More', string $sectionClass = ''): void
 {
     $sectionClasses = trim('home-preview-section section-spacing ' . $sectionClass);
+
     echo '<section class="' . htmlspecialchars($sectionClasses) . '">';
     echo '<div class="home-preview-section-header">';
     echo '<h2>' . htmlspecialchars($title) . '</h2>';
@@ -53,11 +58,37 @@ function renderHomeFeaturedCatsSection(array $cats, string $buttonHref): void
     foreach ($cats as $cat) {
         echo '<article class="featured-cat-profile">';
         echo '<div class="featured-cat-avatar-wrap">';
-        echo '<img class="featured-cat-avatar" src="' . htmlspecialchars($cat['photo']) . '" alt="' . htmlspecialchars($cat['name']) . '">';
+        echo '<img class="featured-cat-avatar" src="assets/img/mini/' . htmlspecialchars($cat['photo']) . '" alt="' . htmlspecialchars($cat['name']) . '">';
         echo '</div>';
         echo '<h3>' . htmlspecialchars($cat['name']) . '</h3>';
         echo '<p class="featured-cat-age">' . htmlspecialchars($cat['age']) . '</p>';
-        echo '<p class="featured-cat-description">' . htmlspecialchars($cat['description']) . '</p>';
+
+        echo '</article>';
+    }
+
+    echo '</div>';
+    echo '<div class="home-preview-section-footer">';
+    echo '<a class="home-preview-button" href="' . htmlspecialchars($buttonHref) . '">View More</a>';
+    echo '</div>';
+    echo '</section>';
+}
+function renderHomeMenuPreviewSection(array $items, string $buttonHref): void
+{
+    echo '<section class="home-preview-section home-preview-section-menu section-spacing">';
+    echo '<div class="home-preview-section-header">';
+    echo '<h2>Menu</h2>';
+    echo '</div>';
+    echo '<div class="home-menu-preview-row">';
+
+    foreach ($items as $item) {
+        echo '<article class="home-menu-preview-card">';
+        echo '<div class="home-menu-preview-image-wrap">';
+        echo '<img class="home-menu-preview-image" src="' . htmlspecialchars($item['image']) . '" alt="' . htmlspecialchars($item['name']) . '">';
+        echo '</div>';
+        echo '<div class="home-menu-preview-body">';
+        echo '<h3>' . htmlspecialchars($item['name']) . '</h3>';
+        echo '<p class="home-menu-preview-price">' . htmlspecialchars($item['price']) . '</p>';
+        echo '</div>';
         echo '</article>';
     }
 
@@ -79,6 +110,8 @@ function renderHomeMerchStripSection(array $items, string $buttonHref): void
     foreach ($items as $item) {
         echo '<article class="home-merch-photo-item">';
         echo '<img class="home-merch-photo" src="' . htmlspecialchars($item['image']) . '" alt="' . htmlspecialchars($item['name']) . '">';
+        echo '<h3>' . htmlspecialchars($item['name']) . '</h3>';
+        echo '<p>' . htmlspecialchars($item['price']) . '</p>';
         echo '</article>';
     }
 
@@ -99,8 +132,10 @@ function renderHomeEventsImageSection(array $events, string $buttonHref): void
 
     foreach ($events as $event) {
         echo '<article class="home-event-image-card">';
+        echo '<a href="' . htmlspecialchars($event['link']) . '">';
         echo '<img class="home-event-image" src="' . htmlspecialchars($event['image']) . '" alt="' . htmlspecialchars($event['title']) . '">';
-        echo '<h3>' . htmlspecialchars($event['title']) . '</h3>';
+
+        echo '</a>';
         echo '</article>';
     }
 
@@ -128,40 +163,12 @@ function renderHomeAboutLocationSection(string $buttonHref, string $mapEmbedUrl,
     echo '</section>';
 }
 
-$adoptPreviewCards = array_map(
-    static function (array $cat): array {
-        return [
-            'mediaLabel' => $cat['name'],
-            'title' => $cat['name'],
-            'description' => $cat['age'] . ' · ' . $cat['personality'],
-        ];
-    },
-    pickRandomItems($adoptableCats)
-);
+$allMenuItems = array_merge($drinks ?? [], $desserts ?? []);
+$menuPreviewItems = pickRandomItems($allMenuItems, 3);
 
-$menuPreviewCards = array_map(
-    static function (array $drink): array {
-        return [
-            'mediaLabel' => 'Drink',
-            'title' => $drink['name'],
-            'description' => $drink['description'],
-        ];
-    },
-    pickRandomItems($drinks)
-);
-
-$eventsPreviewCards = array_map(
-    static function (array $event): array {
-        return [
-            'image' => $event['image'],
-            'title' => $event['title'],
-        ];
-    },
-    pickRandomItems($upcoming_events)
-);
-
-$featuredCats = pickRandomItems($adoptableCats);
-$merchPreviewItems = pickRandomItems($merch_items, 6);
+$eventsPreviewCards = pickRandomItems($upcoming_events ?? []);
+$featuredCats = pickRandomItems($adoptableCats ?? []);
+$merchPreviewItems = pickRandomItems($merch_items ?? [], 6);
 
 $storeLatitude = 40.7128;
 $storeLongitude = -74.0060;
@@ -170,12 +177,14 @@ $minLongitude = $storeLongitude - $mapSpan;
 $maxLongitude = $storeLongitude + $mapSpan;
 $minLatitude = $storeLatitude - $mapSpan;
 $maxLatitude = $storeLatitude + $mapSpan;
+
 $aboutMapEmbedUrl = 'https://www.openstreetmap.org/export/embed.html?bbox=' .
     rawurlencode($minLongitude . ',' . $minLatitude . ',' . $maxLongitude . ',' . $maxLatitude) .
     '&layer=mapnik&marker=' . rawurlencode($storeLatitude . ',' . $storeLongitude);
 
 renderHomeFeaturedCatsSection($featuredCats, 'adopt.php');
-renderHomePreviewSection('Menu', $menuPreviewCards, 'menu.php', 'View More', 'home-preview-section-menu');
+renderHomeMenuPreviewSection($menuPreviewItems, 'menu.php');
 renderHomeEventsImageSection($eventsPreviewCards, 'events.php');
 renderHomeMerchStripSection($merchPreviewItems, 'merch.php');
 renderHomeAboutLocationSection('aboutus.php', $aboutMapEmbedUrl, $storeLatitude, $storeLongitude);
+?>

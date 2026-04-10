@@ -1,61 +1,23 @@
 <?php
-$upcoming_events = [
-    [
-        'title' => 'Cat Yoga Evening',
-        'date' => 'May 18, 2026',
-        'description' => 'Relaxing yoga session with our café cats in a calm candlelit setup.',
-        'image' => 'assets/img/events/cat-yoga.jpg',
-        'link' => 'event-cat-yoga.php',
-    ],
-    [
-        'title' => 'Latte Art & Purrs',
-        'date' => 'June 02, 2026',
-        'description' => 'Hands-on latte art workshop while spending time with our adoptable cats.',
-        'image' => 'assets/img/events/latte-art.jpg',
-        'link' => 'event-latte-art.php',
-    ],
-    [
-        'title' => 'Shelter Support Night',
-        'date' => 'June 21, 2026',
-        'description' => 'Fundraising evening with themed drinks and stories from our shelter partner.',
-        'image' => 'assets/img/events/shelter-night.jpg',
-        'link' => 'event-shelter-support.php',
-    ],
-];
+include_once __DIR__ . '/../../db.php';
 
-$previous_events = [
-    [
-        'title' => 'Kitten Adoption Day',
-        'date' => 'March 10, 2026',
-        'description' => 'Special adoption day that helped several kittens find their forever homes.',
-        'image' => 'assets/img/events/adoption-day.jpg',
-        'link' => 'event-adoption-day.php',
-    ],
-    [
-        'title' => 'Paint with Cats',
-        'date' => 'February 14, 2026',
-        'description' => 'Creative evening of painting, coffee, and playful cat companions.',
-        'image' => 'assets/img/events/paint-with-cats.jpg',
-        'link' => 'event-paint-with-cats.php',
-    ],
-    [
-        'title' => 'Holiday Cat Market',
-        'date' => 'December 20, 2025',
-        'description' => 'Seasonal market featuring local makers, desserts, and cat-themed gifts.',
-        'image' => 'assets/img/events/holiday-market.jpg',
-        'link' => 'event-holiday-market.php',
-    ],
-];
+$upcoming_events = [];
+$previous_events = [];
 
-function renderEventCards($events)
+function renderEventCards(array $events): void
 {
+    if (empty($events)) {
+        echo '<p>No events available right now.</p>';
+        return;
+    }
+
     foreach ($events as $event) {
         echo '<article class="event-card">';
         echo '<div class="event-image-frame">';
         echo '<img class="event-image" src="' . htmlspecialchars($event['image']) . '" alt="' . htmlspecialchars($event['title']) . '">';
         echo '</div>';
         echo '<div class="event-card-body">';
-        echo '<p class="event-date">' . htmlspecialchars($event['date']) . '</p>';
+        echo '<p class="event-date">' . htmlspecialchars($event['formatted_date']) . '</p>';
         echo '<h3 class="event-title">' . htmlspecialchars($event['title']) . '</h3>';
         echo '<p class="event-description">' . htmlspecialchars($event['description']) . '</p>';
         echo '<a class="event-arrow-btn" href="' . htmlspecialchars($event['link']) . '" aria-label="Open ' . htmlspecialchars($event['title']) . '">';
@@ -65,3 +27,30 @@ function renderEventCards($events)
         echo '</article>';
     }
 }
+
+$sql = "SELECT id, title, event_date, description, image, link FROM events ORDER BY event_date ASC";
+$result = $conn->query($sql);
+
+if ($result && $result->num_rows > 0) {
+    $today = date('Y-m-d');
+
+    while ($row = $result->fetch_assoc()) {
+        $event = [
+            'title' => $row['title'],
+            'date' => $row['event_date'],
+            'formatted_date' => date('F d, Y', strtotime($row['event_date'])),
+            'description' => $row['description'],
+            'image' => $row['image'],
+            'link' => $row['link'],
+        ];
+
+        if ($row['event_date'] >= $today) {
+            $upcoming_events[] = $event;
+        } else {
+            $previous_events[] = $event;
+        }
+    }
+
+    $previous_events = array_reverse($previous_events);
+}
+?>

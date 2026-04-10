@@ -1,23 +1,18 @@
 <?php
-include 'db.php';
+require_once 'db.php';
 
-if (isset($_POST['order'])) {
-    $data = json_decode($_POST['order_data'], true);
+$merchItems = [];
+$result = $conn->query("
+    SELECT id, name, price, image, description, stock
+    FROM products
+");
 
-    if ($data) {
-        foreach ($data as $item) {
-            $id = (int)$item['id'];
-            $qty = (int)$item['qty'];
-
-            $conn->query("UPDATE products SET stock = stock - $qty WHERE id=$id AND stock >= $qty");
-        }
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $merchItems[] = $row;
     }
-
-    header("Location: merch.php");
-    exit;
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <?php include 'modules/parts/head.php'; ?>
@@ -27,26 +22,17 @@ if (isset($_POST['order'])) {
 
 <main class="merch-main">
     <div class="page-container">
-        <?php
-        $result = $conn->query("SELECT * FROM products");
-        $merch_items = [];
-
-        if ($result) {
-            while ($row = $result->fetch_assoc()) {
-                $merch_items[] = $row;
-            }
-        }
-        ?>
-
         <section class="merch-section">
             <h1 class="merch-title">Merchandise</h1>
 
             <div class="merch-grid">
-                <?php foreach ($merch_items as $item): ?>
+                <?php foreach ($merchItems as $item): ?>
                     <article class="merch-card">
-                        <img class="merch-image"
-                             src="<?= htmlspecialchars($item['image']) ?>"
-                             alt="<?= htmlspecialchars($item['name']) ?>">
+                        <img
+                            class="merch-image"
+                            src="<?= htmlspecialchars($item['image']) ?>"
+                            alt="<?= htmlspecialchars($item['name']) ?>"
+                        >
 
                         <div class="merch-content">
                             <h3 class="merch-name"><?= htmlspecialchars($item['name']) ?></h3>
@@ -58,23 +44,21 @@ if (isset($_POST['order'])) {
                                 <button
                                     class="add-cart-btn"
                                     type="button"
-                                    data-id="<?= $item['id'] ?>"
+                                    data-id="<?= (int) $item['id'] ?>"
                                     data-name="<?= htmlspecialchars($item['name']) ?>"
-                                    data-price="<?= $item['price'] ?>"
-                                    data-stock="<?= $item['stock'] ?>"
+                                    data-price="<?= htmlspecialchars($item['price']) ?>"
+                                    data-stock="<?= (int) $item['stock'] ?>"
                                 >
                                     Add to Cart
                                 </button>
                             </div>
 
                             <p class="stock-text">
-                                <?php if ((int)$item['stock'] > 0): ?>
+                                <?php if ((int) $item['stock'] > 0): ?>
                                     In stock:
-                                    <span class="stock-value"><?= $item['stock'] ?></span>
+                                    <span class="stock-value"><?= (int) $item['stock'] ?></span>
                                 <?php else: ?>
-                                    <span class="stock-value" style="color:#BD0E0E;">
-                                        Out of stock
-                                    </span>
+                                    <span class="stock-value stock-value-out">Out of stock</span>
                                 <?php endif; ?>
                             </p>
                         </div>
@@ -85,7 +69,8 @@ if (isset($_POST['order'])) {
     </div>
 </main>
 
-<button id="cart-fab" class="cart-fab">🛒
+<button id="cart-fab" class="cart-fab">
+    🛒
     <span id="cart-count" class="cart-count">0</span>
 </button>
 
@@ -110,19 +95,27 @@ if (isset($_POST['order'])) {
 
 <div id="sad-modal" class="sad-modal">
     <div class="sad-modal-content">
-        <h2>Prepáčte 😿</h2>
-        <p>Tento tovar nie je na sklade.</p>
+        <h2>Sorry 😿</h2>
+        <p>This item is out of stock.</p>
         <button id="close-sad">OK</button>
     </div>
 </div>
 
 <script>
 (function () {
-
     var cart = {};
 
     var sadModal = document.getElementById('sad-modal');
     var closeSad = document.getElementById('close-sad');
+
+    var cartFab = document.getElementById('cart-fab');
+    var cartPanel = document.getElementById('cart-panel');
+    var cartCount = document.getElementById('cart-count');
+    var cartItems = document.getElementById('cart-items');
+    var cartTotal = document.getElementById('cart-total');
+    var addButtons = document.querySelectorAll('.add-cart-btn');
+    var orderButton = document.querySelector('[name="order"]');
+    var orderDataInput = document.getElementById('order_data');
 
     function showSadCat() {
         sadModal.classList.add('show');
@@ -131,13 +124,6 @@ if (isset($_POST['order'])) {
     closeSad.addEventListener('click', function () {
         sadModal.classList.remove('show');
     });
-
-    var cartFab = document.getElementById('cart-fab');
-    var cartPanel = document.getElementById('cart-panel');
-    var cartCount = document.getElementById('cart-count');
-    var cartItems = document.getElementById('cart-items');
-    var cartTotal = document.getElementById('cart-total');
-    var addButtons = document.querySelectorAll('.add-cart-btn');
 
     function parsePrice(value) {
         return parseFloat(value) || 0;
@@ -149,14 +135,18 @@ if (isset($_POST['order'])) {
 
     function getTotalCost() {
         var total = 0;
+
         Object.values(cart).forEach(function (item) {
             total += item.price * item.qty;
         });
+
         return total;
     }
 
     function animateFlyToCart(fromElement) {
-        if (!fromElement || !cartFab) return;
+        if (!fromElement || !cartFab) {
+            return;
+        }
 
         var fromRect = fromElement.getBoundingClientRect();
         var toRect = cartFab.getBoundingClientRect();
@@ -166,11 +156,8 @@ if (isset($_POST['order'])) {
 
         dot.style.left = (fromRect.left + fromRect.width / 2) + 'px';
         dot.style.top = (fromRect.top + fromRect.height / 2) + 'px';
-
-        dot.style.setProperty('--fly-x',
-            (toRect.left - fromRect.left) + 'px');
-        dot.style.setProperty('--fly-y',
-            (toRect.top - fromRect.top) + 'px');
+        dot.style.setProperty('--fly-x', (toRect.left - fromRect.left) + 'px');
+        dot.style.setProperty('--fly-y', (toRect.top - fromRect.top) + 'px');
 
         document.body.appendChild(dot);
 
@@ -184,50 +171,47 @@ if (isset($_POST['order'])) {
     }
 
     function renderCart() {
-    cartItems.innerHTML = '';
+        cartItems.innerHTML = '';
 
-    var keys = Object.keys(cart);
+        var keys = Object.keys(cart);
 
-    if (!keys.length) {
-        cartItems.innerHTML =
-            '<li class="cart-empty">Your cart is empty.</li>';
-        cartCount.textContent = '0';
-        cartTotal.textContent = formatPrice(0);
-        return;
-    }
+        if (!keys.length) {
+            cartItems.innerHTML = '<li class="cart-empty">Your cart is empty.</li>';
+            cartCount.textContent = '0';
+            cartTotal.textContent = formatPrice(0);
+            return;
+        }
 
-    keys.forEach(function (key) {
-        var item = cart[key];
+        keys.forEach(function (key) {
+            var item = cart[key];
 
-        var li = document.createElement('li');
-        li.className = 'cart-item';
+            var li = document.createElement('li');
+            li.className = 'cart-item';
 
-        var name = document.createElement('span');
-        name.textContent = item.name + ' x' + item.qty;
+            var name = document.createElement('span');
+            name.textContent = item.name + ' x' + item.qty;
 
-        var remove = document.createElement('button');
-        remove.textContent = '✕';
-        remove.className = 'remove-btn';
+            var remove = document.createElement('button');
+            remove.textContent = '✕';
+            remove.className = 'remove-btn';
 
-        remove.addEventListener('click', function () {
-            delete cart[key];
-            renderCart();
+            remove.addEventListener('click', function () {
+                delete cart[key];
+                renderCart();
+            });
+
+            li.appendChild(name);
+            li.appendChild(remove);
+            cartItems.appendChild(li);
         });
 
-        li.appendChild(name);
-        li.appendChild(remove);
-
-        cartItems.appendChild(li);
-    });
-
-    cartCount.textContent = keys.length;
-    cartTotal.textContent = formatPrice(getTotalCost());
-}
+        cartCount.textContent = keys.length;
+        cartTotal.textContent = formatPrice(getTotalCost());
+    }
 
     addButtons.forEach(function (button) {
         button.addEventListener('click', function () {
-
-            var stock = parseInt(button.dataset.stock);
+            var stock = parseInt(button.dataset.stock, 10);
 
             if (stock <= 0) {
                 showSadCat();
@@ -246,21 +230,18 @@ if (isset($_POST['order'])) {
             }
 
             cart[id].qty++;
-
             renderCart();
             animateFlyToCart(button);
         });
     });
 
-    document.querySelector('[name="order"]').addEventListener('click', function (e) {
-
+    orderButton.addEventListener('click', function (e) {
         if (getTotalCost() <= 0) {
             e.preventDefault();
             return;
         }
 
-        document.getElementById('order_data').value =
-            JSON.stringify(cart);
+        orderDataInput.value = JSON.stringify(cart);
     });
 
     cartFab.addEventListener('click', function () {
@@ -268,7 +249,6 @@ if (isset($_POST['order'])) {
     });
 
     renderCart();
-
 })();
 </script>
 

@@ -2,7 +2,11 @@
 include 'db.php';
 
 $total = 0;
-$data = json_decode($_POST['order_data'], true);
+$data = [];
+
+if (isset($_POST['order_data'])) {
+    $data = json_decode($_POST['order_data'], true);
+}
 
 if ($data) {
     foreach ($data as $item) {
@@ -13,12 +17,41 @@ if ($data) {
 $success = false;
 
 if (isset($_POST['confirm'])) {
+
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $address = $_POST['address'];
+
     if ($data) {
+
+        $stmt = $conn->prepare("
+            INSERT INTO orders (name, email, address, total)
+            VALUES (?, ?, ?, ?)
+        ");
+
+        $stmt->bind_param("sssd", $name, $email, $address, $total);
+        $stmt->execute();
+
+        $order_id = $stmt->insert_id;
+
         foreach ($data as $item) {
+
             $id = (int)$item['id'];
             $qty = (int)$item['qty'];
+            $price = (float)$item['price'];
+            $name_item = $item['name'];
 
-            $conn->query("UPDATE products SET stock = stock - $qty WHERE id=$id AND stock >= $qty");
+            $conn->query("
+                INSERT INTO order_items
+                (order_id, product_id, product_name, quantity, price)
+                VALUES ($order_id, $id, '$name_item', $qty, $price)
+            ");
+
+            $conn->query("
+                UPDATE products 
+                SET stock = stock - $qty 
+                WHERE id=$id AND stock >= $qty
+            ");
         }
     }
 
@@ -30,105 +63,31 @@ if (isset($_POST['confirm'])) {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Checkout</title>
-
-<style>
-
-body {
-    margin: 0;
-    font-family: Arial;
-    background: #f5e6d3;
-}
-
-.checkout-container {
-    max-width: 500px;
-    margin: 40px auto;
-    background: white;
-    padding: 25px;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-}
-
-h1 {
-    text-align: center;
-    color: #5a3e2b;
-}
-
-.total-box {
-    background: #f3e1cf;
-    padding: 10px;
-    border-radius: 10px;
-    text-align: center;
-    margin-bottom: 15px;
-    font-weight: bold;
-}
-
-input, select {
-    width: 100%;
-    padding: 10px;
-    margin-top: 6px;
-    margin-bottom: 15px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-}
-
-button {
-    width: 100%;
-    padding: 12px;
-    background: #5a3e2b;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.card-box {
-    display: none;
-    background: #fafafa;
-    padding: 15px;
-    border-radius: 12px;
-    margin-top: 10px;
-}
-
-.success-modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
-
-.success-box {
-    background: white;
-    padding: 25px;
-    border-radius: 16px;
-    text-align: center;
-    max-width: 300px;
-}
-
-.success-box a {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 8px 15px;
-    background: #5a3e2b;
-    color: white;
-    border-radius: 10px;
-    text-decoration: none;
-}
-
-</style>
+<link rel="stylesheet" href="assets/css/pages/checkout.css">
 </head>
 
 <body>
 
 <div class="checkout-container">
 
+<h1>Checkout</h1>
+
 <p class="total-box">
     Total: <?= number_format($total, 2) ?>€
 </p>
+
+<?php if ($data): ?>
+<div class="order-summary">
+    <h3>Your order</h3>
+    <ul>
+        <?php foreach ($data as $item): ?>
+            <li>
+                <?= htmlspecialchars($item['name']) ?> × <?= $item['qty'] ?>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+</div>
+<?php endif; ?>
 
 <form method="POST">
 
@@ -152,13 +111,13 @@ button {
 <div id="card-box" class="card-box">
 
     <label>Card Number</label>
-    <input type="text" placeholder="1234 5678 9012 3456">
+    <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456">
 
     <label>Expiry</label>
-    <input type="text" placeholder="MM/YY">
+    <input type="text" id="expiry" placeholder="MM/YY">
 
     <label>CVV</label>
-    <input type="text" placeholder="123">
+    <input type="text" id="cvv" placeholder="123">
 
 </div>
 
@@ -183,11 +142,29 @@ var payment = document.getElementById('payment');
 var cardBox = document.getElementById('card-box');
 
 payment.addEventListener('change', function () {
-    if (payment.value === 'card') {
-        cardBox.style.display = 'block';
-    } else {
-        cardBox.style.display = 'none';
-    }
+    cardBox.style.display = payment.value === 'card' ? 'block' : 'none';
+});
+
+const expiryInput = document.getElementById('expiry');
+const cardInput = document.getElementById('cardNumber');
+const cvvInput = document.getElementById('cvv');
+
+expiryInput.addEventListener('input', function () {
+    let v = expiryInput.value.replace(/\D/g, '');
+    if (v.length > 4) v = v.slice(0,4);
+    if (v.length >= 2) v = v.slice(0,2) + '/' + v.slice(2);
+    expiryInput.value = v;
+});
+
+cardInput.addEventListener('input', function () {
+    let v = cardInput.value.replace(/\D/g, '');
+    if (v.length > 16) v = v.slice(0,16);
+    v = v.replace(/(.{4})/g, '$1 ').trim();
+    cardInput.value = v;
+});
+
+cvvInput.addEventListener('input', function () {
+    cvvInput.value = cvvInput.value.replace(/\D/g, '').slice(0,4);
 });
 </script>
 
