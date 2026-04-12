@@ -1,4 +1,8 @@
 /* adopt hero */
+:root {
+    --footer-fade-from: var(--color4);
+}
+
 .adopt-hero {
     background: var(--color3);
     color: var(--color5);

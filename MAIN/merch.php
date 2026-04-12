@@ -31,6 +31,8 @@ if ($result) {
                         <img
                             class="merch-image"
                             src="<?= htmlspecialchars($item['image']) ?>"
+                            loading="lazy"
+                            decoding="async"
                             alt="<?= htmlspecialchars($item['name']) ?>"
                         >
 
@@ -70,7 +72,7 @@ if ($result) {
 </main>
 
 <button id="cart-fab" class="cart-fab">
-    🛒
+    <span class="cart-fab-icon" aria-hidden="true"></span>
     <span id="cart-count" class="cart-count">0</span>
 </button>
 
@@ -95,162 +97,13 @@ if ($result) {
 
 <div id="sad-modal" class="sad-modal">
     <div class="sad-modal-content">
-        <h2>Sorry 😿</h2>
+        <h2>Sorry <span class="sorry-icon" aria-hidden="true"></span></h2>
         <p>This item is out of stock.</p>
         <button id="close-sad">OK</button>
     </div>
 </div>
 
-<script>
-(function () {
-    var cart = {};
-
-    var sadModal = document.getElementById('sad-modal');
-    var closeSad = document.getElementById('close-sad');
-
-    var cartFab = document.getElementById('cart-fab');
-    var cartPanel = document.getElementById('cart-panel');
-    var cartCount = document.getElementById('cart-count');
-    var cartItems = document.getElementById('cart-items');
-    var cartTotal = document.getElementById('cart-total');
-    var addButtons = document.querySelectorAll('.add-cart-btn');
-    var orderButton = document.querySelector('[name="order"]');
-    var orderDataInput = document.getElementById('order_data');
-
-    function showSadCat() {
-        sadModal.classList.add('show');
-    }
-
-    closeSad.addEventListener('click', function () {
-        sadModal.classList.remove('show');
-    });
-
-    function parsePrice(value) {
-        return parseFloat(value) || 0;
-    }
-
-    function formatPrice(value) {
-        return value.toFixed(2) + '€';
-    }
-
-    function getTotalCost() {
-        var total = 0;
-
-        Object.values(cart).forEach(function (item) {
-            total += item.price * item.qty;
-        });
-
-        return total;
-    }
-
-    function animateFlyToCart(fromElement) {
-        if (!fromElement || !cartFab) {
-            return;
-        }
-
-        var fromRect = fromElement.getBoundingClientRect();
-        var toRect = cartFab.getBoundingClientRect();
-
-        var dot = document.createElement('span');
-        dot.className = 'cart-fly-dot';
-
-        dot.style.left = (fromRect.left + fromRect.width / 2) + 'px';
-        dot.style.top = (fromRect.top + fromRect.height / 2) + 'px';
-        dot.style.setProperty('--fly-x', (toRect.left - fromRect.left) + 'px');
-        dot.style.setProperty('--fly-y', (toRect.top - fromRect.top) + 'px');
-
-        document.body.appendChild(dot);
-
-        requestAnimationFrame(function () {
-            dot.classList.add('animate');
-        });
-
-        setTimeout(function () {
-            dot.remove();
-        }, 1400);
-    }
-
-    function renderCart() {
-        cartItems.innerHTML = '';
-
-        var keys = Object.keys(cart);
-
-        if (!keys.length) {
-            cartItems.innerHTML = '<li class="cart-empty">Your cart is empty.</li>';
-            cartCount.textContent = '0';
-            cartTotal.textContent = formatPrice(0);
-            return;
-        }
-
-        keys.forEach(function (key) {
-            var item = cart[key];
-
-            var li = document.createElement('li');
-            li.className = 'cart-item';
-
-            var name = document.createElement('span');
-            name.textContent = item.name + ' x' + item.qty;
-
-            var remove = document.createElement('button');
-            remove.textContent = '✕';
-            remove.className = 'remove-btn';
-
-            remove.addEventListener('click', function () {
-                delete cart[key];
-                renderCart();
-            });
-
-            li.appendChild(name);
-            li.appendChild(remove);
-            cartItems.appendChild(li);
-        });
-
-        cartCount.textContent = keys.length;
-        cartTotal.textContent = formatPrice(getTotalCost());
-    }
-
-    addButtons.forEach(function (button) {
-        button.addEventListener('click', function () {
-            var stock = parseInt(button.dataset.stock, 10);
-
-            if (stock <= 0) {
-                showSadCat();
-                return;
-            }
-
-            var id = button.dataset.id;
-
-            if (!cart[id]) {
-                cart[id] = {
-                    id: id,
-                    name: button.dataset.name,
-                    price: parsePrice(button.dataset.price),
-                    qty: 0
-                };
-            }
-
-            cart[id].qty++;
-            renderCart();
-            animateFlyToCart(button);
-        });
-    });
-
-    orderButton.addEventListener('click', function (e) {
-        if (getTotalCost() <= 0) {
-            e.preventDefault();
-            return;
-        }
-
-        orderDataInput.value = JSON.stringify(cart);
-    });
-
-    cartFab.addEventListener('click', function () {
-        cartPanel.classList.toggle('open');
-    });
-
-    renderCart();
-})();
-</script>
+<script src="assets/js/merch.min.js" defer></script>
 
 </body>
 </html>

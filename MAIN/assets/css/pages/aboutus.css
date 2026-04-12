@@ -1,3 +1,7 @@
+:root {
+    --footer-fade-from: var(--color4);
+}
+
 .about-main {
     background: var(--color4);
     min-height: calc(100vh - 140px);

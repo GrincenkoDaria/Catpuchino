@@ -58,7 +58,7 @@ function renderHomeFeaturedCatsSection(array $cats, string $buttonHref): void
     foreach ($cats as $cat) {
         echo '<article class="featured-cat-profile">';
         echo '<div class="featured-cat-avatar-wrap">';
-        echo '<img class="featured-cat-avatar" src="assets/img/mini/' . htmlspecialchars($cat['photo']) . '" alt="' . htmlspecialchars($cat['name']) . '">';
+        echo '<img class="featured-cat-avatar" src="assets/img/mini/' . htmlspecialchars($cat['photo']) . '" alt="' . htmlspecialchars($cat['name']) . '" loading="lazy" decoding="async">';
         echo '</div>';
         echo '<h3>' . htmlspecialchars($cat['name']) . '</h3>';
         echo '<p class="featured-cat-age">' . htmlspecialchars($cat['age']) . '</p>';
@@ -83,7 +83,7 @@ function renderHomeMenuPreviewSection(array $items, string $buttonHref): void
     foreach ($items as $item) {
         echo '<article class="home-menu-preview-card">';
         echo '<div class="home-menu-preview-image-wrap">';
-        echo '<img class="home-menu-preview-image" src="' . htmlspecialchars($item['image']) . '" alt="' . htmlspecialchars($item['name']) . '">';
+        echo '<img class="home-menu-preview-image" src="' . htmlspecialchars($item['image']) . '" alt="' . htmlspecialchars($item['name']) . '" loading="lazy" decoding="async">';
         echo '</div>';
         echo '<div class="home-menu-preview-body">';
         echo '<h3>' . htmlspecialchars($item['name']) . '</h3>';
@@ -109,7 +109,7 @@ function renderHomeMerchStripSection(array $items, string $buttonHref): void
 
     foreach ($items as $item) {
         echo '<article class="home-merch-photo-item">';
-        echo '<img class="home-merch-photo" src="' . htmlspecialchars($item['image']) . '" alt="' . htmlspecialchars($item['name']) . '">';
+        echo '<img class="home-merch-photo" src="' . htmlspecialchars($item['image']) . '" alt="' . htmlspecialchars($item['name']) . '" loading="lazy" decoding="async">';
         echo '<h3>' . htmlspecialchars($item['name']) . '</h3>';
         echo '<p>' . htmlspecialchars($item['price']) . '</p>';
         echo '</article>';
@@ -132,10 +132,7 @@ function renderHomeEventsImageSection(array $events, string $buttonHref): void
 
     foreach ($events as $event) {
         echo '<article class="home-event-image-card">';
-        echo '<a href="' . htmlspecialchars($event['link']) . '">';
-        echo '<img class="home-event-image" src="' . htmlspecialchars($event['image']) . '" alt="' . htmlspecialchars($event['title']) . '">';
-
-        echo '</a>';
+        echo '<img class="home-event-image" src="' . htmlspecialchars($event['image']) . '" alt="' . htmlspecialchars($event['title']) . '" loading="lazy" decoding="async">';
         echo '</article>';
     }
 

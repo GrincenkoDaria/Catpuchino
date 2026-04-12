@@ -410,53 +410,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <?php include 'modules/parts/footer.php'; ?>
 
-    <script>
-        const donateRange = document.getElementById('donateRange');
-        const donateAmount = document.getElementById('donateAmount');
-        const donateModal = document.getElementById('donateModal');
-        const expiryInput = document.getElementById('expiry');
-        const cardNumberInput = document.getElementById('cardNumber');
-        const cvvInput = document.getElementById('cvv');
-
-        donateRange.addEventListener('input', function () {
-            donateAmount.textContent = donateRange.value;
-        });
-
-        expiryInput.addEventListener('input', function () {
-            let value = expiryInput.value.replace(/\D/g, '');
-
-            if (value.length > 4) {
-                value = value.substring(0, 4);
-            }
-
-            if (value.length >= 2) {
-                value = value.substring(0, 2) + '/' + value.substring(2);
-            }
-
-            expiryInput.value = value;
-        });
-
-        cardNumberInput.addEventListener('input', function () {
-            let value = cardNumberInput.value.replace(/\D/g, '');
-
-            if (value.length > 16) {
-                value = value.substring(0, 16);
-            }
-
-            value = value.replace(/(.{4})/g, '$1 ').trim();
-            cardNumberInput.value = value;
-        });
-
-        cvvInput.addEventListener('input', function () {
-            cvvInput.value = cvvInput.value.replace(/\D/g, '').substring(0, 4);
-        });
-
-        donateModal.addEventListener('click', function (e) {
-            if (e.target === donateModal) {
-                donateModal.classList.remove('is-open');
-                donateModal.setAttribute('aria-hidden', 'true');
-            }
-        });
-    </script>
+    <script src="assets/js/form-utils.min.js" defer></script>
 </body>
 </html>

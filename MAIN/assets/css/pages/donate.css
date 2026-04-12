@@ -1,3 +1,7 @@
+:root {
+    --footer-fade-from: var(--color7);
+}
+
 .donate-main {
     padding: 2rem 0 3rem;
     background: var(--color7);

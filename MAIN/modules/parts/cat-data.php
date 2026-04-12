@@ -33,12 +33,12 @@ function renderCatCards($cats, $buttonText = 'Adopt me', $imagePath = 'assets/im
 
     foreach ($cats as $cat) {
         echo '<div class="cat-card">';
-        echo '<img src="' . htmlspecialchars($imagePath . $cat['photo']) . '" alt="' . htmlspecialchars($cat['name']) . '" class="cat-photo">';
+        echo '<img src="' . htmlspecialchars($imagePath . $cat['photo']) . '" alt="' . htmlspecialchars($cat['name']) . '" class="cat-photo" loading="lazy" decoding="async">';
         echo '<h3>' . htmlspecialchars($cat['name']) . '</h3>';
         echo '<p class="subtitle">' . htmlspecialchars($cat['personality']) . '</p>';
         echo '<p class="cat-age">Age: ' . htmlspecialchars($cat['age']) . '</p>';
         echo '<p class="cat-description">' . htmlspecialchars($cat['description']) . '</p>';
-        echo '<a class="btn-adopt" href="#" aria-label="Adopt ' . htmlspecialchars($cat['name']) . '">' . htmlspecialchars($buttonText) . '</a>';
+        echo '<a class="btn-adopt" href="todo.php?feature=adopt-cat" aria-label="Adopt ' . htmlspecialchars($cat['name']) . '">' . htmlspecialchars($buttonText) . '</a>';
         echo '</div>';
     }
 
@@ -51,7 +51,7 @@ function renderAdoptedCatCards($cats, $imagePath = 'assets/img/')
 
     foreach ($cats as $cat) {
         echo '<div class="cat-card">';
-        echo '<img src="' . htmlspecialchars($imagePath . $cat['photo']) . '" alt="' . htmlspecialchars($cat['name']) . '" class="cat-photo">';
+        echo '<img src="' . htmlspecialchars($imagePath . $cat['photo']) . '" alt="' . htmlspecialchars($cat['name']) . '" class="cat-photo" loading="lazy" decoding="async">';
         echo '<h3>' . htmlspecialchars($cat['name']) . '</h3>';
         echo '<p class="cat-description">' . htmlspecialchars($cat['note']) . '</p>';
         echo '</div>';

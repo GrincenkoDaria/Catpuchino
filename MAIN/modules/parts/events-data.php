@@ -12,15 +12,17 @@ function renderEventCards(array $events): void
     }
 
     foreach ($events as $event) {
+        $eventLink = 'todo.php?feature=event-details';
+
         echo '<article class="event-card">';
         echo '<div class="event-image-frame">';
-        echo '<img class="event-image" src="' . htmlspecialchars($event['image']) . '" alt="' . htmlspecialchars($event['title']) . '">';
+        echo '<img class="event-image" src="' . htmlspecialchars($event['image']) . '" alt="' . htmlspecialchars($event['title']) . '" loading="lazy" decoding="async">';
         echo '</div>';
         echo '<div class="event-card-body">';
         echo '<p class="event-date">' . htmlspecialchars($event['formatted_date']) . '</p>';
         echo '<h3 class="event-title">' . htmlspecialchars($event['title']) . '</h3>';
         echo '<p class="event-description">' . htmlspecialchars($event['description']) . '</p>';
-        echo '<a class="event-arrow-btn" href="' . htmlspecialchars($event['link']) . '" aria-label="Open ' . htmlspecialchars($event['title']) . '">';
+        echo '<a class="event-arrow-btn" href="' . htmlspecialchars($eventLink) . '" aria-label="Open ' . htmlspecialchars($event['title']) . '">';
         echo '<span aria-hidden="true">→</span>';
         echo '</a>';
         echo '</div>';

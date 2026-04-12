@@ -18,7 +18,7 @@ function renderMenuCards(array $items): void
 
         if (!empty($item['image'])) {
             echo '<div class="menu-image-frame">';
-            echo '<img class="menu-item-image" src="' . htmlspecialchars($item['image']) . '" alt="' . htmlspecialchars($item['name']) . '">';
+            echo '<img class="menu-item-image" src="' . htmlspecialchars($item['image']) . '" alt="' . htmlspecialchars($item['name']) . '" loading="lazy" decoding="async">';
             echo '</div>';
         } else {
             echo '<div class="menu-image-placeholder">No Image</div>';

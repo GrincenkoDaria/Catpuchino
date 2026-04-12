@@ -137,36 +137,7 @@ if (isset($_POST['confirm'])) {
 </div>
 <?php endif; ?>
 
-<script>
-var payment = document.getElementById('payment');
-var cardBox = document.getElementById('card-box');
-
-payment.addEventListener('change', function () {
-    cardBox.style.display = payment.value === 'card' ? 'block' : 'none';
-});
-
-const expiryInput = document.getElementById('expiry');
-const cardInput = document.getElementById('cardNumber');
-const cvvInput = document.getElementById('cvv');
-
-expiryInput.addEventListener('input', function () {
-    let v = expiryInput.value.replace(/\D/g, '');
-    if (v.length > 4) v = v.slice(0,4);
-    if (v.length >= 2) v = v.slice(0,2) + '/' + v.slice(2);
-    expiryInput.value = v;
-});
-
-cardInput.addEventListener('input', function () {
-    let v = cardInput.value.replace(/\D/g, '');
-    if (v.length > 16) v = v.slice(0,16);
-    v = v.replace(/(.{4})/g, '$1 ').trim();
-    cardInput.value = v;
-});
-
-cvvInput.addEventListener('input', function () {
-    cvvInput.value = cvvInput.value.replace(/\D/g, '').slice(0,4);
-});
-</script>
+<script src="assets/js/form-utils.min.js" defer></script>
 
 </body>
 </html>
