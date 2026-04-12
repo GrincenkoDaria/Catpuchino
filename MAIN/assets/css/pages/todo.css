@@ -1,0 +1,69 @@
+:root {
+    --footer-fade-from: var(--color4);
+}
+
+.todo-main {
+    min-height: calc(100vh - 140px);
+    background: var(--color4);
+    padding: 2rem 0 3rem;
+}
+
+.todo-section {
+    background: var(--color5);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+    padding: 1.4rem;
+    max-width: 760px;
+}
+
+.todo-kicker {
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+    color: var(--color3);
+    font-weight: 700;
+}
+
+.todo-section h1 {
+    margin: 0.35rem 0 0.7rem;
+    color: var(--color1);
+    font-size: clamp(1.5rem, 4vw, 2rem);
+}
+
+.todo-copy {
+    margin: 0;
+    color: var(--color2);
+}
+
+.todo-feature {
+    margin: 0.75rem 0 0;
+    color: var(--color1);
+    font-weight: 700;
+}
+
+.todo-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.todo-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 110px;
+    padding: 0.55rem 0.9rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 700;
+    background: var(--color1);
+    color: var(--color5);
+}
+
+.todo-btn-secondary {
+    background: var(--color3);
+    color: var(--color5);
+}
