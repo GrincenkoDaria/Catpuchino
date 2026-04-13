@@ -3,59 +3,99 @@ include 'db.php';
 
 $total = 0;
 $data = [];
+$error = '';
+$success = false;
 
 if (isset($_POST['order_data'])) {
     $data = json_decode($_POST['order_data'], true);
+    if (!is_array($data)) {
+        $data = [];
+    }
 }
 
 if ($data) {
     foreach ($data as $item) {
-        $total += $item['price'] * $item['qty'];
+        $qty = isset($item['qty']) ? (int)$item['qty'] : 0;
+        $price = isset($item['price']) ? (float)$item['price'] : 0;
+        $total += $price * $qty;
     }
 }
 
-$success = false;
-
 if (isset($_POST['confirm'])) {
+    $name = trim($_POST['name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $address = trim($_POST['address'] ?? '');
 
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $address = $_POST['address'];
+    if (!$data) {
+        $error = 'Your cart is empty.';
+    } else {
+        $conn->begin_transaction();
 
-    if ($data) {
+        try {
+            foreach ($data as $item) {
+                $id = (int)($item['id'] ?? 0);
+                $qty = (int)($item['qty'] ?? 0);
 
-        $stmt = $conn->prepare("
-            INSERT INTO orders (name, email, address, total)
-            VALUES (?, ?, ?, ?)
-        ");
+                if ($id <= 0 || $qty <= 0) {
+                    throw new Exception('Invalid order data.');
+                }
 
-        $stmt->bind_param("sssd", $name, $email, $address, $total);
-        $stmt->execute();
+                $stmtCheck = $conn->prepare("SELECT name, stock FROM products WHERE id = ? FOR UPDATE");
+                $stmtCheck->bind_param("i", $id);
+                $stmtCheck->execute();
+                $productResult = $stmtCheck->get_result();
+                $product = $productResult->fetch_assoc();
+                $stmtCheck->close();
 
-        $order_id = $stmt->insert_id;
+                if (!$product) {
+                    throw new Exception('Product not found.');
+                }
 
-        foreach ($data as $item) {
+                if ((int)$product['stock'] < $qty) {
+                    throw new Exception('Not enough stock for ' . $product['name'] . '.');
+                }
+            }
 
-            $id = (int)$item['id'];
-            $qty = (int)$item['qty'];
-            $price = (float)$item['price'];
-            $name_item = $item['name'];
-
-            $conn->query("
-                INSERT INTO order_items
-                (order_id, product_id, product_name, quantity, price)
-                VALUES ($order_id, $id, '$name_item', $qty, $price)
+            $stmt = $conn->prepare("
+                INSERT INTO orders (name, email, address, total)
+                VALUES (?, ?, ?, ?)
             ");
+            $stmt->bind_param("sssd", $name, $email, $address, $total);
+            $stmt->execute();
+            $order_id = $stmt->insert_id;
+            $stmt->close();
 
-            $conn->query("
-                UPDATE products 
-                SET stock = stock - $qty 
-                WHERE id=$id AND stock >= $qty
-            ");
+            foreach ($data as $item) {
+                $id = (int)$item['id'];
+                $qty = (int)$item['qty'];
+                $price = (float)$item['price'];
+                $name_item = $item['name'];
+
+                $stmtItem = $conn->prepare("
+                    INSERT INTO order_items (order_id, product_id, product_name, quantity, price)
+                    VALUES (?, ?, ?, ?, ?)
+                ");
+                $stmtItem->bind_param("iisid", $order_id, $id, $name_item, $qty, $price);
+                $stmtItem->execute();
+                $stmtItem->close();
+
+                $stmtUpdate = $conn->prepare("
+                    UPDATE products
+                    SET stock = stock - ?
+                    WHERE id = ?
+                ");
+                $stmtUpdate->bind_param("ii", $qty, $id);
+                $stmtUpdate->execute();
+                $stmtUpdate->close();
+            }
+
+            $conn->commit();
+            $success = true;
+        } catch (Exception $e) {
+            $conn->rollback();
+            $error = $e->getMessage();
         }
     }
-
-    $success = true;
 }
 ?>
 
@@ -70,11 +110,13 @@ if (isset($_POST['confirm'])) {
 
 <div class="checkout-container">
 
-<h1>Checkout</h1>
-
 <p class="total-box">
     Total: <?= number_format($total, 2) ?>€
 </p>
+
+<?php if ($error): ?>
+    <p style="color: red; margin-bottom: 15px;"><?= htmlspecialchars($error) ?></p>
+<?php endif; ?>
 
 <?php if ($data): ?>
 <div class="order-summary">
@@ -82,7 +124,7 @@ if (isset($_POST['confirm'])) {
     <ul>
         <?php foreach ($data as $item): ?>
             <li>
-                <?= htmlspecialchars($item['name']) ?> × <?= $item['qty'] ?>
+                <?= htmlspecialchars($item['name']) ?> × <?= (int)$item['qty'] ?>
             </li>
         <?php endforeach; ?>
     </ul>
@@ -90,8 +132,7 @@ if (isset($_POST['confirm'])) {
 <?php endif; ?>
 
 <form method="POST">
-
-<input type="hidden" name="order_data" value='<?= htmlspecialchars($_POST['order_data']) ?>'>
+<input type="hidden" name="order_data" value='<?= htmlspecialchars($_POST['order_data'] ?? "[]", ENT_QUOTES) ?>'>
 
 <label>Name</label>
 <input type="text" name="name" required>
@@ -109,7 +150,6 @@ if (isset($_POST['confirm'])) {
 </select>
 
 <div id="card-box" class="card-box">
-
     <label>Card Number</label>
     <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456">
 
@@ -118,11 +158,9 @@ if (isset($_POST['confirm'])) {
 
     <label>CVV</label>
     <input type="text" id="cvv" placeholder="123">
-
 </div>
 
 <button type="submit" name="confirm">Confirm Order</button>
-
 </form>
 
 </div>

@@ -15,6 +15,7 @@ if ($result) {
                 'age' => $row['age'],
                 'description' => $row['description'],
                 'personality' => $row['personality'],
+                'personality_sk' => $row['personality_sk'],
                 'photo' => $row['photo']
             ];
         } else {
@@ -32,12 +33,23 @@ function renderCatCards($cats, $buttonText = 'Adopt me', $imagePath = 'assets/im
     echo '<div class="cat-cards">';
 
     foreach ($cats as $cat) {
+        $personalityEn = $cat['personality'] ?? '';
+        $personalitySk = $cat['personality_sk'] ?? '';
+        $description = $cat['description'] ?? '';
+
         echo '<div class="cat-card">';
         echo '<img src="' . htmlspecialchars($imagePath . $cat['photo']) . '" alt="' . htmlspecialchars($cat['name']) . '" class="cat-photo" loading="lazy" decoding="async">';
         echo '<h3>' . htmlspecialchars($cat['name']) . '</h3>';
-        echo '<p class="subtitle">' . htmlspecialchars($cat['personality']) . '</p>';
+        echo '<p class="subtitle cat-personality">';
+echo '<span class="lang-en-text">' . htmlspecialchars($personalityEn) . '</span>';
+echo '<span class="lang-sk-text">' . htmlspecialchars($personalitySk) . '</span>';
+echo '</p>';
         echo '<p class="cat-age">Age: ' . htmlspecialchars($cat['age']) . '</p>';
-        echo '<p class="cat-description">' . htmlspecialchars($cat['description']) . '</p>';
+
+        if (!empty($description)) {
+            echo '<p class="cat-description">' . htmlspecialchars($description) . '</p>';
+        }
+
         echo '<a class="btn-adopt" href="todo.php?feature=adopt-cat" aria-label="Adopt ' . htmlspecialchars($cat['name']) . '">' . htmlspecialchars($buttonText) . '</a>';
         echo '</div>';
     }

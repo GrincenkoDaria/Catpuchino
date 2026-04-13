@@ -154,5 +154,19 @@
 
     .cat-card {
         max-width: 100%;
-    }
+    }}
+.lang-en-text {
+    display: inline;
+}
+
+.lang-sk-text {
+    display: none;
+}
+
+html.lang-sk-active .lang-en-text {
+    display: none !important;
+}
+
+html.lang-sk-active .lang-sk-text {
+    display: inline !important;
 }

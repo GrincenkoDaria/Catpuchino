@@ -5,13 +5,13 @@
     <?php include 'modules/parts/header.php'; ?>
 
     <?php
-    $storeLatitude = 40.7128;
-    $storeLongitude = -74.0060;
-    $mapSpan = 0.012;
-    $minLongitude = $storeLongitude - $mapSpan;
-    $maxLongitude = $storeLongitude + $mapSpan;
-    $minLatitude = $storeLatitude - $mapSpan;
-    $maxLatitude = $storeLatitude + $mapSpan;
+    $storeLatitude = 48.73326;
+$storeLongitude = 19.14192;
+
+$minLatitude = 48.732;
+$minLongitude = 19.140;
+$maxLatitude = 48.735;
+$maxLongitude = 19.145;
     $mapEmbedUrl = 'https://www.openstreetmap.org/export/embed.html?bbox=' .
         rawurlencode($minLongitude . ',' . $minLatitude . ',' . $maxLongitude . ',' . $maxLatitude) .
         '&layer=mapnik&marker=' . rawurlencode($storeLatitude . ',' . $storeLongitude);

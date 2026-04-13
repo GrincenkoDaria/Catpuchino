@@ -210,7 +210,6 @@ body.lang-transitioning {
     color: rgba(255, 255, 255, 0.75);
 }
 
-/* header styles */
 .site-header {
     display: flex;
     align-items: center;
@@ -356,7 +355,7 @@ body.lang-transitioning {
         height: 48px;
         border: 0;
         border-radius: 96px 96px 0 0;
-        background: var(--color1);
+        background: #312010;
         color: var(--color5);
         display: grid;
         place-items: center;
@@ -446,3 +445,27 @@ body.lang-transitioning {
     }
 
 }
+
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #b37f54;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #e2d2bd;
+}
+
+
+@media (max-width: 768px) {
+  body {
+    -ms-overflow-style: none; 
+    scrollbar-width: none;     
+  }
+
+  body::-webkit-scrollbar {
+    display: none; 
+  }}
